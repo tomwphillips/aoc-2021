@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"reflect"
 	"testing"
 )
@@ -25,6 +26,10 @@ func TestNewBoard(t *testing.T) {
 	}
 	if !reflect.DeepEqual(got.numbers, want) {
 		t.Errorf("NewBoard(%v) = %v, want %v", in, got, want)
+	}
+
+	if got.size != 3 {
+		t.Errorf("Got size %d, not 3", got.size)
 	}
 }
 
@@ -62,4 +67,71 @@ func TestComputeScore(t *testing.T) {
 	if got != want {
 		t.Errorf("ComputeScore = %d, want %d", got, want)
 	}
+}
+
+func TestReadInput(t *testing.T) {
+	tests := []struct {
+		in     []string
+		ns     []int
+		num_bs int
+		size   int
+	}{
+		{[]string{
+			"10,20,30,40",
+			"",
+			" 1  2",
+			" 3  4",
+			"",
+			"10 20",
+			"30 40",
+		},
+			[]int{10, 20, 30, 40},
+			2,
+			2,
+		},
+		{[]string{
+			"1,2,3,4,5",
+			"",
+			"10 20 30",
+			"40 50 60",
+			"70 80 90",
+			"",
+			"01 02 03",
+			"04 05 06",
+			"07 08 09",
+			"",
+			"30 40 50",
+			"60 70 80",
+			"90 10 20",
+		},
+			[]int{1, 2, 3, 4, 5},
+			3,
+			3,
+		},
+	}
+
+	for _, test := range tests {
+		var buffer bytes.Buffer
+		for _, line := range test.in {
+			buffer.WriteString(line + "\n")
+		}
+
+		ns, bs := ReadInput(&buffer)
+
+		if !reflect.DeepEqual(ns, test.ns) {
+			t.Errorf("ReadInput ns = %v, want %v", ns, test.ns)
+		}
+
+		if len(bs) != test.num_bs {
+			t.Errorf("Got %d boards, want %d", len(bs), test.num_bs)
+		}
+
+		for _, b := range bs {
+			if b.size != test.size {
+				t.Errorf("Size %d, want %d", b.size, test.size)
+			}
+		}
+
+	}
+
 }

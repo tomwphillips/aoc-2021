@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"fmt"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -80,6 +82,45 @@ func ComputeScore(b *Board, ns []int) int {
 	return sum * ns[len(ns)-1]
 }
 
-func main() {
+func ReadInput(reader io.Reader) ([]int, []*Board) {
+	scanner := bufio.NewScanner(reader)
 
+	scanner.Scan()
+	str_ns := strings.Split(scanner.Text(), ",")
+	ns := make([]int, len(str_ns))
+	for i, str_n := range str_ns {
+		n, err := strconv.Atoi(str_n)
+		if err != nil {
+			log.Fatal(err)
+		}
+		ns[i] = n
+	}
+
+	scanner.Scan()
+
+	var bs []*Board
+	var lines []string
+	for scanner.Scan() {
+		if line := scanner.Text(); line != "" {
+			lines = append(lines, line)
+		} else {
+			bs = append(bs, NewBoard(lines))
+			lines = []string{}
+		}
+	}
+	bs = append(bs, NewBoard(lines))
+	return ns, bs
+}
+
+func main() {
+	ns, bs := ReadInput(os.Stdin)
+	for i, n := range ns {
+		for j := range bs {
+			if CheckBoard(bs[j], n) {
+				score := ComputeScore(bs[j], ns[:i+1])
+				fmt.Printf("Score: %d\n", score)
+				os.Exit(0)
+			}
+		}
+	}
 }
