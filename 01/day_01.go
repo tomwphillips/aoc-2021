@@ -3,27 +3,47 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strconv"
 )
 
-func main() {
-	var last_measurement int = 0
-	var depth_increases int = -1
-	scanner := bufio.NewScanner(os.Stdin)
+func ReadMeasurements(reader io.Reader) []int {
+	scanner := bufio.NewScanner(reader)
+	var ms []int
 	for scanner.Scan() {
-		measurement, err := strconv.Atoi(scanner.Text())
+		m, err := strconv.Atoi(scanner.Text())
 		if err != nil {
 			log.Fatal(err)
 		}
-		if measurement > last_measurement {
-			depth_increases+=1
+		ms = append(ms, m)
+	}
+	return ms
+}
+
+func Part1(ms []int) int {
+	var increases int
+	for i := 1; i < len(ms); i++ {
+		if ms[i] > ms[i-1] {
+			increases++
 		}
-		last_measurement = measurement
 	}
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
+	return increases
+}
+
+func Part2(ms []int) int {
+	var increases int
+	for i := 1; i < len(ms)-2; i++ {
+		if ms[i]+ms[i+1]+ms[i+2] > ms[i-1]+ms[i]+ms[i+1] {
+			increases++
+		}
 	}
-	fmt.Println(depth_increases)
+	return increases
+}
+
+func main() {
+	ms := ReadMeasurements(os.Stdin)
+	fmt.Printf("Part 1: %d\n", Part1(ms))
+	fmt.Printf("Part 2: %d\n", Part2(ms))
 }
