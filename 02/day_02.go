@@ -4,14 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"strings"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type position struct {
 	horizontal_position int
-	depth int
+	depth               int
 }
 
 func parseInstruction(i string, p *position) {
@@ -29,17 +29,26 @@ func parseInstruction(i string, p *position) {
 	case "up":
 		p.depth -= magnitude
 	}
+}
 
+func Part1(instructions []string) int {
+	p := position{horizontal_position: 0, depth: 0}
+	for i := range instructions {
+		parseInstruction(instructions[i], &p)
+	}
+	return p.horizontal_position * p.depth
 }
 
 func main() {
-	p := position{horizontal_position: 0, depth: 0}
+
 	scanner := bufio.NewScanner(os.Stdin)
+	var instructions []string
 	for scanner.Scan() {
-		parseInstruction(scanner.Text(), &p)
+		instructions = append(instructions, scanner.Text())
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(p.horizontal_position * p.depth)
+
+	fmt.Printf("Part 1: %d\n", Part1(instructions))
 }
