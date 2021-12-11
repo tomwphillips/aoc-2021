@@ -39,8 +39,40 @@ func Part1(instructions []string) int {
 	return p.horizontal_position * p.depth
 }
 
-func main() {
+type Part2Position struct {
+	horizontal int
+	depth      int
+	aim        int
+}
 
+func CalculatePart2Position(instructions []string) Part2Position {
+	p := Part2Position{0, 0, 0}
+	for _, instruction := range instructions {
+		s := strings.Split(instruction, " ")
+		direction := s[0]
+		magnitude, err := strconv.Atoi(s[1])
+		if err != nil {
+			log.Fatal(err)
+		}
+		switch direction {
+		case "forward":
+			p.horizontal += magnitude
+			p.depth += p.aim * magnitude
+		case "down":
+			p.aim += magnitude
+		case "up":
+			p.aim -= magnitude
+		}
+	}
+	return p
+}
+
+func Part2(instructions []string) int {
+	p := CalculatePart2Position(instructions)
+	return p.horizontal * p.depth
+}
+
+func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	var instructions []string
 	for scanner.Scan() {
@@ -51,4 +83,5 @@ func main() {
 	}
 
 	fmt.Printf("Part 1: %d\n", Part1(instructions))
+	fmt.Printf("Part 2: %d\n", Part2(instructions))
 }
