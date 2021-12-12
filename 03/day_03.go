@@ -51,6 +51,61 @@ func binaryToInt(s string) int {
 	return int(i)
 }
 
+func filterValues(report []string, position int, mostCommon bool) []string {
+	var sum int
+	for i := range report {
+		x, err := strconv.Atoi(string(report[i][position]))
+		if err != nil {
+			log.Fatal(err)
+		}
+		sum += x
+	}
+
+	var condition bool
+	if mostCommon {
+		condition = sum >= len(report)-sum
+	} else {
+		condition = sum < len(report)-sum
+	}
+
+	var filter_bit rune
+	if condition {
+		filter_bit = '1'
+	} else {
+		filter_bit = '0'
+	}
+
+	filtered_report := make([]string, 0, len(report))
+	for i := range report {
+		if report[i][position] == byte(filter_bit) {
+			filtered_report = append(filtered_report, report[i])
+		}
+	}
+	return filtered_report
+}
+
+func computeOxygenGeneratorRating(report []string) int {
+	position := 0
+	for {
+		if len(report) == 1 {
+			return binaryToInt(report[0])
+		}
+		report = filterValues(report, position, true)
+		position++
+	}
+}
+
+func computeCO2ScrubberRating(report []string) int {
+	position := 0
+	for {
+		if len(report) == 1 {
+			return binaryToInt(report[0])
+		}
+		report = filterValues(report, position, false)
+		position++
+	}
+}
+
 func main() {
 	var report []string
 	scanner := bufio.NewScanner(os.Stdin)
@@ -64,4 +119,12 @@ func main() {
 	fmt.Printf("Epsilon rate: %v (%d)\n", epsilon_rate, binaryToInt(epsilon_rate))
 
 	fmt.Printf("Power consumption: %d\n", binaryToInt(gamma_rate)*binaryToInt(epsilon_rate))
+
+	oxygen_rating := computeOxygenGeneratorRating(report)
+	fmt.Printf("Oxygen rating: %d\n", oxygen_rating)
+
+	co2_scrubber_rating := computeCO2ScrubberRating(report)
+	fmt.Printf("CO2 scrubber rating: %d\n", co2_scrubber_rating)
+
+	fmt.Printf("Life support rating: %d\n", co2_scrubber_rating*oxygen_rating)
 }

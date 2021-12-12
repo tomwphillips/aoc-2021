@@ -62,3 +62,47 @@ func TestBinaryToInt(t *testing.T) {
 		}
 	}
 }
+
+func TestComputeOxygenGeneratorRating(t *testing.T) {
+	in := []string{
+		"00100",
+		"11110",
+		"10110",
+		"10111",
+		"10101",
+		"01111",
+		"00111",
+		"11100",
+		"10000",
+		"11001",
+		"00010",
+		"01010",
+	}
+	want := 23
+	got := computeOxygenGeneratorRating(in)
+	if want != got {
+		t.Errorf("computeOxygenGeneratorRating(in) = %d, want %d", got, want)
+	}
+}
+
+func TestComputeCO2ScrubberRating(t *testing.T) {
+	in := []string{
+		"00100",
+		"11110",
+		"10110",
+		"10111",
+		"10101",
+		"01111",
+		"00111",
+		"11100",
+		"10000",
+		"11001",
+		"00010",
+		"01010",
+	}
+	want := 10
+	got := computeCO2ScrubberRating(in)
+	if want != got {
+		t.Errorf("computeCO2ScrubberRating(in) = %d, want %d", got, want)
+	}
+}
