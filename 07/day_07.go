@@ -59,7 +59,51 @@ func median(x []int) int {
 func Part1(crabs []Crab) {
 	pos := MostFuelEfficientPosition(crabs)
 	fuel := Align(crabs, pos)
-	fmt.Printf("Fuel at position %d: %d\n", pos, fuel)
+	fmt.Printf("Part 1 - Fuel at position %d: %d\n", pos, fuel)
+}
+
+func ExpensiveAlign(crabs []Crab, pos int) int {
+	var total_fuel int
+	for _, crab := range crabs {
+		diff := crab.Position - pos
+		if diff < 0 {
+			diff = diff * -1
+		}
+		total_fuel += (diff * (diff + 1)) / 2
+	}
+	return total_fuel
+}
+
+func mean(x []int) float64 {
+	var sum int
+	for i := range x {
+		sum += x[i]
+	}
+	return (float64(sum) / float64(len(x)))
+}
+
+func MostFuelEfficientExpensivePosition(crabs []Crab) int {
+	pos := make([]int, len(crabs))
+	for i := range crabs {
+		pos[i] = crabs[i].Position
+	}
+
+	// Stumbled across this by luck. Intuitively thought the most efficient position was
+	// the mean. Not attempted to prove why this works.
+	var solution int
+	for _, p := range [3]int{int(mean(pos)) - 1, int(mean(pos)), int(mean(pos)) + 1} {
+		f := ExpensiveAlign(crabs, p)
+		if f < ExpensiveAlign(crabs, solution) {
+			solution = p
+		}
+	}
+	return solution
+}
+
+func Part2(crabs []Crab) {
+	pos := MostFuelEfficientExpensivePosition(crabs)
+	fuel := ExpensiveAlign(crabs, pos)
+	fmt.Printf("Part 2 - Fuel at position %d: %d\n", pos, fuel)
 }
 
 func main() {
@@ -70,4 +114,5 @@ func main() {
 
 	crabs := ParseInput(input)
 	Part1(crabs)
+	Part2(crabs)
 }

@@ -43,3 +43,29 @@ func TestMostFuelEfficientPosition(t *testing.T) {
 		t.Errorf("MostFuelEfficientPosition(%v) = %d, want %d", in, got, want)
 	}
 }
+
+func TestExpensiveAlign(t *testing.T) {
+	crabs := ParseInput([]byte("16,1,2,0,4,2,7,1,2,14"))
+	tests := []struct {
+		in   int
+		want int
+	}{
+		{5, 168},
+		{2, 206},
+	}
+	for _, test := range tests {
+		got := ExpensiveAlign(crabs, test.in)
+		if got != test.want {
+			t.Errorf("Align(%d) = %d, want %d", test.in, got, test.want)
+		}
+	}
+}
+
+func TestMostFuelEfficientExpensivePosition(t *testing.T) {
+	in := ParseInput([]byte("16,1,2,0,4,2,7,1,2,14"))
+	got := MostFuelEfficientExpensivePosition(in)
+	want := 5
+	if got != want {
+		t.Errorf("MostFuelEfficientExpensivePosition(%v) = %d, want %d", in, got, want)
+	}
+}
